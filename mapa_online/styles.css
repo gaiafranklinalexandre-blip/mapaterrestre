@@ -2,6 +2,8 @@
   --blue: #1351b4;
   --blue-dark: #071d41;
   --cyan: #0c6f8f;
+  --red: #c43e1c;
+  --teal: #007d79;
   --green: #168821;
   --orange: #d86d12;
   --bg: #f7f9fc;
@@ -34,7 +36,13 @@ h1, h2, p { margin: 0; }
 h1 { font-size: 20px; line-height: 1.2; }
 h2 { font-size: 14px; }
 .title p, .note { color: var(--muted); font-size: 12px; }
-.metrics { display: flex; gap: 8px; }
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 560px;
+}
 .metrics div, .reading div {
   min-width: 78px;
   padding: 6px 10px;
@@ -108,6 +116,8 @@ button:hover { background: #e9edf5; border-color: #2670e8; }
 }
 .blue { background: var(--blue); }
 .cyan { background: var(--cyan); }
+.red { background: var(--red); }
+.teal { background: var(--teal); }
 .green { background: var(--green); }
 .orange { background: var(--orange); }
 .field { display: block; margin-bottom: 10px; }
@@ -234,6 +244,8 @@ input, select {
 }
 .marker-mcom-fluvial { background: var(--blue); }
 .marker-mcom-terrestre { background: var(--cyan); }
+.marker-uom-mcom { background: var(--red); }
+.marker-esfr { background: var(--teal); width: 10px; height: 10px; opacity: .92; }
 .marker-ubsf { background: var(--green); }
 .marker-apoio { background: var(--orange); width: 10px; height: 10px; opacity: .86; }
 .leaflet-popup-content h3 { margin: 0 0 6px; font-size: 14px; }

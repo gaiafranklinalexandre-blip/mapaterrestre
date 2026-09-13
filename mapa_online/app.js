@@ -2,10 +2,12 @@
   const data = window.MAPA_APS_DATA || { summary: {}, layers: {} };
   const layers = {
     mcom: data.layers.mcom || [],
+    uomMcom: data.layers.uomMcom || [],
+    esfr: data.layers.esfr || [],
     ubsf: data.layers.ubsf || [],
     apoio: data.layers.apoio || [],
   };
-  const state = { mcomFluvial: true, mcomTerrestre: true, ubsf: true, apoio: false, search: "", uf: "", type: "" };
+  const state = { mcomFluvial: true, mcomTerrestre: true, uomMcom: false, esfr: false, ubsf: true, apoio: false, search: "", uf: "", type: "" };
 
   const map = L.map("map", { zoomControl: false }).setView([-9.5, -55], 4);
   L.control.zoom({ position: "topright" }).addTo(map);
@@ -39,6 +41,8 @@
   const els = {
     metricMcomFluvial: byId("metricMcomFluvial"),
     metricMcomTerrestre: byId("metricMcomTerrestre"),
+    metricUomMcom: byId("metricUomMcom"),
+    metricEsfr: byId("metricEsfr"),
     metricUbsf: byId("metricUbsf"),
     metricApoio: byId("metricApoio"),
     visibleCount: byId("visibleCount"),
@@ -49,6 +53,8 @@
     selectedContent: byId("selectedContent"),
     mcomFluvialToggle: byId("mcomFluvialToggle"),
     mcomTerrestreToggle: byId("mcomTerrestreToggle"),
+    uomMcomToggle: byId("uomMcomToggle"),
+    esfrToggle: byId("esfrToggle"),
     ubsfToggle: byId("ubsfToggle"),
     apoioToggle: byId("apoioToggle"),
     searchInput: byId("searchInput"),
@@ -60,14 +66,18 @@
 
   els.metricMcomFluvial.textContent = fmt(countMcom("FLUVIAL"));
   els.metricMcomTerrestre.textContent = fmt(countMcom("TERRESTRE"));
+  els.metricUomMcom.textContent = fmt(data.summary.uomMcomMapped || layers.uomMcom.length);
+  els.metricEsfr.textContent = fmt(data.summary.esfrMapped || layers.esfr.length);
   els.metricUbsf.textContent = fmt(data.summary.ubsfMapped || layers.ubsf.length);
   els.metricApoio.textContent = fmt(data.summary.apoioEstimated || layers.apoio.length);
 
-  fillSelect(els.ufFilter, unique([...layers.mcom, ...layers.ubsf, ...layers.apoio].map((d) => d.uf)).sort());
-  fillSelect(els.typeFilter, unique(layers.mcom.map((d) => d.type)).sort());
+  fillSelect(els.ufFilter, unique([...layers.mcom, ...layers.uomMcom, ...layers.esfr, ...layers.ubsf, ...layers.apoio].map((d) => d.uf)).sort());
+  fillSelect(els.typeFilter, unique([...layers.mcom, ...layers.uomMcom, ...layers.esfr].map((d) => d.type)).sort());
 
   els.mcomFluvialToggle.addEventListener("change", () => { state.mcomFluvial = els.mcomFluvialToggle.checked; render(); });
   els.mcomTerrestreToggle.addEventListener("change", () => { state.mcomTerrestre = els.mcomTerrestreToggle.checked; render(); });
+  els.uomMcomToggle.addEventListener("change", () => { state.uomMcom = els.uomMcomToggle.checked; render(); });
+  els.esfrToggle.addEventListener("change", () => { state.esfr = els.esfrToggle.checked; render(); });
   els.ubsfToggle.addEventListener("change", () => { state.ubsf = els.ubsfToggle.checked; render(); });
   els.apoioToggle.addEventListener("change", () => { state.apoio = els.apoioToggle.checked; render(); });
   els.searchInput.addEventListener("input", () => { state.search = normalize(els.searchInput.value); render(); });
@@ -115,11 +125,13 @@
     return [
       ...(state.mcomFluvial ? layers.mcom.filter((item) => isMcomFluvial(item)) : []),
       ...(state.mcomTerrestre ? layers.mcom.filter((item) => isMcomTerrestre(item)) : []),
+      ...(state.uomMcom ? layers.uomMcom : []),
+      ...(state.esfr ? layers.esfr : []),
       ...(state.ubsf ? layers.ubsf : []),
       ...(state.apoio ? layers.apoio : []),
     ].filter((item) => {
       if (state.uf && item.uf !== state.uf) return false;
-      if (state.type && item.layer !== "mcom") return false;
+      if (state.type && !["mcom", "uomMcom", "esfr"].includes(item.layer)) return false;
       if (state.type && item.type !== state.type) return false;
       if (!state.search) return true;
       const text = normalize([item.id, item.cnes, item.name, item.municipio, item.uf, item.type, item.endereco, item.ubsf].join(" "));
@@ -159,7 +171,11 @@
       ? [["CNES UBSF", item.cnes], ["Endereço", item.endereco], ["UBSF", item.ubsf], ["Confiança", item.confianca]]
       : item.layer === "ubsf"
         ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Apoios", item.qtdApoio], ["Endereço", [item.logradouro, item.bairro, item.cep].filter(Boolean).join(", ")]]
-        : [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Tipo", item.type], ["Fibra", item.fibra], ["ERB", item.erb]];
+        : item.layer === "uomMcom"
+          ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Status", item.status], ["Endereço", item.endereco]]
+          : item.layer === "esfr"
+            ? [["CNES", item.id], ["Tipo", item.type], ["Status", item.status]]
+            : [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Tipo", item.type], ["Fibra", item.fibra], ["ERB", item.erb]];
     els.selectedContent.innerHTML = `<h3>${esc(item.name || "Sem nome")}</h3><dl>${rows.map(([a,b]) => `<dt>${esc(a)}</dt><dd>${esc(b || "-")}</dd>`).join("")}</dl>`;
   }
 
@@ -169,13 +185,17 @@
       ? [["CNES UBSF", item.cnes], ["Município", `${item.municipio}/${item.uf}`], ["Endereço", item.endereco], ["Uso", "estimado"]]
       : item.layer === "ubsf"
         ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Apoios", item.qtdApoio]]
-        : [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Tipo", item.type], ["Fibra", item.fibra || "-"]];
+        : item.layer === "uomMcom"
+          ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Status", item.status], ["Endereço", item.endereco]]
+          : item.layer === "esfr"
+            ? [["CNES", item.id], ["Tipo", item.type], ["Status", item.status]]
+            : [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Tipo", item.type], ["Fibra", item.fibra || "-"]];
     return `<h3>${title}</h3><dl>${rows.map(([a,b]) => `<dt>${esc(a)}</dt><dd>${esc(b || "-")}</dd>`).join("")}</dl>`;
   }
 
   function iconFor(item) {
-    const cls = item.layer === "apoio" ? "marker-apoio" : item.layer === "ubsf" ? "marker-ubsf" : isMcomFluvial(item) ? "marker-mcom-fluvial" : "marker-mcom-terrestre";
-    const size = item.layer === "apoio" ? [10, 10] : [15, 15];
+    const cls = item.layer === "apoio" ? "marker-apoio" : item.layer === "ubsf" ? "marker-ubsf" : item.layer === "uomMcom" ? "marker-uom-mcom" : item.layer === "esfr" ? "marker-esfr" : isMcomFluvial(item) ? "marker-mcom-fluvial" : "marker-mcom-terrestre";
+    const size = item.layer === "apoio" || item.layer === "esfr" ? [10, 10] : [15, 15];
     const anchor = [size[0] / 2, size[1] / 2];
     return L.divIcon({ className: `marker-dot ${cls}`, html: "", iconSize: size, iconAnchor: anchor });
   }
@@ -187,14 +207,16 @@
   }
 
   function colorClass(item) {
-    return item.layer === "apoio" ? "orange" : item.layer === "ubsf" ? "green" : isMcomFluvial(item) ? "blue" : "cyan";
+    return item.layer === "apoio" ? "orange" : item.layer === "ubsf" ? "green" : item.layer === "uomMcom" ? "red" : item.layer === "esfr" ? "teal" : isMcomFluvial(item) ? "blue" : "cyan";
   }
   function countMcom(kind) { return layers.mcom.filter((item) => normalize(item.type).includes(normalize(kind))).length; }
   function isMcomFluvial(item) { return item.layer === "mcom" && normalize(item.type).includes("fluvial"); }
   function isMcomTerrestre(item) { return item.layer === "mcom" && normalize(item.type).includes("terrestre"); }
-  function badgeText(item) { return item.layer === "apoio" ? "Apoio" : item.layer === "ubsf" ? "UBSF" : isMcomFluvial(item) ? "MCom fluvial" : "MCom terrestre"; }
+  function badgeText(item) { return item.layer === "apoio" ? "Apoio" : item.layer === "ubsf" ? "UBSF" : item.layer === "uomMcom" ? "UOM MCom" : item.layer === "esfr" ? "eSFR" : isMcomFluvial(item) ? "MCom fluvial" : "MCom terrestre"; }
   function shortType(item) {
     if (item.layer === "mcom") return isMcomFluvial(item) ? "Fluvial" : "Terrestre";
+    if (item.layer === "uomMcom") return "UOM MCom";
+    if (item.layer === "esfr") return "eSFR";
     if (item.layer === "apoio") return "Apoio estimado";
     return "UBSF";
   }
