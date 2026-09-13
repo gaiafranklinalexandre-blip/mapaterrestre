@@ -11,18 +11,18 @@
   L.control.zoom({ position: "topright" }).addTo(map);
   const baseLayers = [
     {
-      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-      options: {
-        subdomains: "abcd",
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      },
-    },
-    {
-      url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      url: "https://tile.openstreetmap.de/{z}/{x}/{y}.png",
       options: {
         maxZoom: 18,
         attribution: '&copy; OpenStreetMap contributors',
+      },
+    },
+    {
+      url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+      options: {
+        subdomains: "abc",
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team',
       },
     },
   ];
