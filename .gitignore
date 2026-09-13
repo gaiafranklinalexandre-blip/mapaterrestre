@@ -1,0 +1,31 @@
+# Bases brutas e artefatos de trabalho
+*.xlsx
+*.xls
+*.csv
+*.pptx
+*.zip
+*.png
+
+# Documentacao interna do desenvolvimento
+CODEX.md
+
+# SQLs exploratorios locais
+*.sql
+
+# Versao local/pesada de desenvolvimento
+mapa/
+
+# Sistema/temporarios
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# Manter o app publico
+!mapa_online/
+!mapa_online/**
+!README.md
+!render.yaml
+
+# Capturas locais nao precisam ir para publicacao
+mapa_online/preview.png

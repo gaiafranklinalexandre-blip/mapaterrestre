@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mapa online de conectividade APS</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Gerência APS</div>
+    <div class="title">
+      <h1>Mapa online de conectividade APS</h1>
+      <p>Mapa-base OpenStreetMap, camadas SAPS/MCom e pontos de apoio estimados</p>
+    </div>
+    <div class="metrics">
+      <div><strong id="metricMcom">177</strong><span>MCom</span></div>
+      <div><strong id="metricUbsf">72</strong><span>UBSF</span></div>
+      <div><strong id="metricApoio">275</strong><span>Apoios</span></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <section class="panel">
+        <div class="panel-title">
+          <h2>Camadas</h2>
+          <button id="fitBtn" type="button">Ajustar</button>
+        </div>
+        <label class="layer-row">
+          <input id="mcomToggle" type="checkbox" checked>
+          <i class="dot blue"></i>
+          <span><strong>MCom 177</strong><small>unidades enviadas pelo MCom</small></span>
+        </label>
+        <label class="layer-row">
+          <input id="ubsfToggle" type="checkbox" checked>
+          <i class="dot green"></i>
+          <span><strong>UBSF SCNES</strong><small>coordenada cadastral da unidade</small></span>
+        </label>
+        <label class="layer-row">
+          <input id="apoioToggle" type="checkbox">
+          <i class="dot orange"></i>
+          <span><strong>Apoios estimados</strong><small>visualização, baixa confiança</small></span>
+        </label>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <h2>Filtros</h2>
+          <button id="clearBtn" type="button">Limpar</button>
+        </div>
+        <label class="field">
+          <span>Busca</span>
+          <input id="searchInput" type="search" placeholder="CNES, município, unidade ou apoio">
+        </label>
+        <div class="field-grid">
+          <label class="field">
+            <span>UF</span>
+            <select id="ufFilter"><option value="">Todas</option></select>
+          </label>
+          <label class="field">
+            <span>Tipo</span>
+            <select id="typeFilter"><option value="">Todos</option></select>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Leitura</h2>
+        <div class="reading">
+          <div><strong id="visibleCount">0</strong><span>pontos visíveis</span></div>
+          <div><strong id="selectedCount">0</strong><span>selecionados</span></div>
+        </div>
+        <p class="note">A camada de apoios usa coordenadas estimadas apenas para visualização exploratória.</p>
+      </section>
+
+      <section class="panel selected">
+        <div class="panel-title">
+          <h2>Selecionado</h2>
+          <span id="selectedBadge">-</span>
+        </div>
+        <div id="selectedContent" class="selected-content">
+          <p class="note">Clique em um marcador ou item da lista.</p>
+        </div>
+      </section>
+
+      <section class="panel results-panel">
+        <div class="panel-title">
+          <h2>Resultados</h2>
+          <span id="resultCount" class="count">0</span>
+        </div>
+        <div id="resultList" class="result-list"></div>
+      </section>
+    </aside>
+
+    <section class="map-wrap">
+      <div id="map"></div>
+      <div class="legend">
+        <span><i class="dot blue"></i>MCom</span>
+        <span><i class="dot green"></i>UBSF</span>
+        <span><i class="dot orange"></i>Apoio estimado</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="./data/map-data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

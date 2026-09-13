@@ -1,0 +1,5 @@
+services:
+  - type: web
+    name: mapaterrestre
+    runtime: static
+    staticPublishPath: ./mapa_online
