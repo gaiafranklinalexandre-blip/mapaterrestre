@@ -5,7 +5,7 @@
     ubsf: data.layers.ubsf || [],
     apoio: data.layers.apoio || [],
   };
-  const state = { mcom: true, ubsf: true, apoio: false, search: "", uf: "", type: "" };
+  const state = { mcomFluvial: true, mcomTerrestre: true, ubsf: true, apoio: false, search: "", uf: "", type: "" };
 
   const map = L.map("map", { zoomControl: false }).setView([-9.5, -55], 4);
   L.control.zoom({ position: "topright" }).addTo(map);
@@ -37,7 +37,8 @@
   const markerIndex = new Map();
 
   const els = {
-    metricMcom: byId("metricMcom"),
+    metricMcomFluvial: byId("metricMcomFluvial"),
+    metricMcomTerrestre: byId("metricMcomTerrestre"),
     metricUbsf: byId("metricUbsf"),
     metricApoio: byId("metricApoio"),
     visibleCount: byId("visibleCount"),
@@ -46,7 +47,8 @@
     resultList: byId("resultList"),
     selectedBadge: byId("selectedBadge"),
     selectedContent: byId("selectedContent"),
-    mcomToggle: byId("mcomToggle"),
+    mcomFluvialToggle: byId("mcomFluvialToggle"),
+    mcomTerrestreToggle: byId("mcomTerrestreToggle"),
     ubsfToggle: byId("ubsfToggle"),
     apoioToggle: byId("apoioToggle"),
     searchInput: byId("searchInput"),
@@ -56,14 +58,16 @@
     fitBtn: byId("fitBtn"),
   };
 
-  els.metricMcom.textContent = fmt(data.summary.mcomMapped || layers.mcom.length);
+  els.metricMcomFluvial.textContent = fmt(countMcom("FLUVIAL"));
+  els.metricMcomTerrestre.textContent = fmt(countMcom("TERRESTRE"));
   els.metricUbsf.textContent = fmt(data.summary.ubsfMapped || layers.ubsf.length);
   els.metricApoio.textContent = fmt(data.summary.apoioEstimated || layers.apoio.length);
 
   fillSelect(els.ufFilter, unique([...layers.mcom, ...layers.ubsf, ...layers.apoio].map((d) => d.uf)).sort());
   fillSelect(els.typeFilter, unique(layers.mcom.map((d) => d.type)).sort());
 
-  els.mcomToggle.addEventListener("change", () => { state.mcom = els.mcomToggle.checked; render(); });
+  els.mcomFluvialToggle.addEventListener("change", () => { state.mcomFluvial = els.mcomFluvialToggle.checked; render(); });
+  els.mcomTerrestreToggle.addEventListener("change", () => { state.mcomTerrestre = els.mcomTerrestreToggle.checked; render(); });
   els.ubsfToggle.addEventListener("change", () => { state.ubsf = els.ubsfToggle.checked; render(); });
   els.apoioToggle.addEventListener("change", () => { state.apoio = els.apoioToggle.checked; render(); });
   els.searchInput.addEventListener("input", () => { state.search = normalize(els.searchInput.value); render(); });
@@ -109,7 +113,8 @@
 
   function getVisible() {
     return [
-      ...(state.mcom ? layers.mcom : []),
+      ...(state.mcomFluvial ? layers.mcom.filter((item) => isMcomFluvial(item)) : []),
+      ...(state.mcomTerrestre ? layers.mcom.filter((item) => isMcomTerrestre(item)) : []),
       ...(state.ubsf ? layers.ubsf : []),
       ...(state.apoio ? layers.apoio : []),
     ].filter((item) => {
@@ -130,7 +135,11 @@
       btn.className = "result-item";
       btn.innerHTML = `
         <div class="result-title"><i class="dot ${colorClass(item)}"></i><span>${esc(item.name || "Sem nome")}</span></div>
-        <div class="result-meta">${esc(labelId(item))} · ${esc(item.municipio || "-")}/${esc(item.uf || "-")}<br>${esc(item.type || "")}</div>
+        <div class="result-meta">
+          <span>${esc(labelId(item))}</span>
+          <span>${esc(item.municipio || "-")}/${esc(item.uf || "-")}</span>
+          <span>${esc(shortType(item))}</span>
+        </div>
       `;
       btn.addEventListener("click", () => {
         showSelected(item);
@@ -145,7 +154,7 @@
   }
 
   function showSelected(item) {
-    els.selectedBadge.textContent = item.layer === "apoio" ? "Apoio" : item.layer === "ubsf" ? "UBSF" : "MCom";
+    els.selectedBadge.textContent = badgeText(item);
     const rows = item.layer === "apoio"
       ? [["CNES UBSF", item.cnes], ["Endereço", item.endereco], ["UBSF", item.ubsf], ["Confiança", item.confianca]]
       : item.layer === "ubsf"
@@ -165,7 +174,7 @@
   }
 
   function iconFor(item) {
-    const cls = item.layer === "apoio" ? "marker-apoio" : item.layer === "ubsf" ? "marker-ubsf" : "marker-mcom";
+    const cls = item.layer === "apoio" ? "marker-apoio" : item.layer === "ubsf" ? "marker-ubsf" : isMcomFluvial(item) ? "marker-mcom-fluvial" : "marker-mcom-terrestre";
     const size = item.layer === "apoio" ? [10, 10] : [15, 15];
     const anchor = [size[0] / 2, size[1] / 2];
     return L.divIcon({ className: `marker-dot ${cls}`, html: "", iconSize: size, iconAnchor: anchor });
@@ -178,7 +187,16 @@
   }
 
   function colorClass(item) {
-    return item.layer === "apoio" ? "orange" : item.layer === "ubsf" ? "green" : "blue";
+    return item.layer === "apoio" ? "orange" : item.layer === "ubsf" ? "green" : isMcomFluvial(item) ? "blue" : "cyan";
+  }
+  function countMcom(kind) { return layers.mcom.filter((item) => normalize(item.type).includes(normalize(kind))).length; }
+  function isMcomFluvial(item) { return item.layer === "mcom" && normalize(item.type).includes("fluvial"); }
+  function isMcomTerrestre(item) { return item.layer === "mcom" && normalize(item.type).includes("terrestre"); }
+  function badgeText(item) { return item.layer === "apoio" ? "Apoio" : item.layer === "ubsf" ? "UBSF" : isMcomFluvial(item) ? "MCom fluvial" : "MCom terrestre"; }
+  function shortType(item) {
+    if (item.layer === "mcom") return isMcomFluvial(item) ? "Fluvial" : "Terrestre";
+    if (item.layer === "apoio") return "Apoio estimado";
+    return "UBSF";
   }
   function labelId(item) { return item.layer === "apoio" ? `Apoio ${item.id}` : `CNES ${item.id}`; }
   function byId(id) { return document.getElementById(id); }

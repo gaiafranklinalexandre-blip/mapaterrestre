@@ -1,6 +1,7 @@
 :root {
   --blue: #1351b4;
   --blue-dark: #071d41;
+  --cyan: #0c6f8f;
   --green: #168821;
   --orange: #d86d12;
   --bg: #f7f9fc;
@@ -27,16 +28,6 @@ body {
   padding: 10px 18px;
   background: #fff;
   border-bottom: 1px solid var(--line);
-}
-.brand {
-  display: grid;
-  place-items: center;
-  width: 112px;
-  height: 40px;
-  color: #fff;
-  background: var(--blue);
-  border-radius: 4px;
-  font-weight: 700;
 }
 .title { min-width: 0; flex: 1; }
 h1, h2, p { margin: 0; }
@@ -116,6 +107,7 @@ button:hover { background: #e9edf5; border-color: #2670e8; }
   border-radius: 50%;
 }
 .blue { background: var(--blue); }
+.cyan { background: var(--cyan); }
 .green { background: var(--green); }
 .orange { background: var(--orange); }
 .field { display: block; margin-bottom: 10px; }
@@ -170,10 +162,17 @@ input, select {
   text-align: center;
 }
 .count { background: var(--blue); }
-.result-list { display: grid; gap: 8px; }
+.result-list {
+  display: grid;
+  gap: 6px;
+  max-height: 420px;
+  overflow: auto;
+}
 .result-item {
   width: 100%;
-  padding: 10px;
+  height: auto;
+  min-height: 0;
+  padding: 8px 9px;
   text-align: left;
   background: #fff;
   border: 1px solid var(--line);
@@ -185,11 +184,29 @@ input, select {
   gap: 6px;
   font-weight: 700;
   font-size: 13px;
+  line-height: 1.2;
+}
+.result-title span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .result-meta {
+  display: grid;
+  grid-template-columns: 92px 1fr 76px;
+  gap: 8px;
   margin-top: 4px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.result-meta span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .map-wrap { position: relative; min-width: 0; }
 #map { height: 100%; background: #eef3f8; }
@@ -215,7 +232,8 @@ input, select {
   border-radius: 50%;
   box-shadow: 0 1px 4px rgba(0,0,0,.35);
 }
-.marker-mcom { background: var(--blue); }
+.marker-mcom-fluvial { background: var(--blue); }
+.marker-mcom-terrestre { background: var(--cyan); }
 .marker-ubsf { background: var(--green); }
 .marker-apoio { background: var(--orange); width: 10px; height: 10px; opacity: .86; }
 .leaflet-popup-content h3 { margin: 0 0 6px; font-size: 14px; }

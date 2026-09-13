@@ -10,17 +10,17 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-  <link rel="stylesheet" href="./styles.css?v=9b5a1f0">
+  <link rel="stylesheet" href="./styles.css?v=4c8f2a1">
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">Gerência APS</div>
     <div class="title">
       <h1>Mapa online de conectividade APS</h1>
       <p>Mapa-base OpenStreetMap, camadas SAPS/MCom e pontos de apoio estimados</p>
     </div>
     <div class="metrics">
-      <div><strong id="metricMcom">177</strong><span>MCom</span></div>
+      <div><strong id="metricMcomFluvial">28</strong><span>MCom fluvial</span></div>
+      <div><strong id="metricMcomTerrestre">149</strong><span>MCom terrestre</span></div>
       <div><strong id="metricUbsf">72</strong><span>UBSF</span></div>
       <div><strong id="metricApoio">275</strong><span>Apoios</span></div>
     </div>
@@ -34,9 +34,14 @@
           <button id="fitBtn" type="button">Ajustar</button>
         </div>
         <label class="layer-row">
-          <input id="mcomToggle" type="checkbox" checked>
+          <input id="mcomFluvialToggle" type="checkbox" checked>
           <i class="dot blue"></i>
-          <span><strong>MCom 177</strong><small>unidades enviadas pelo MCom</small></span>
+          <span><strong>MCom - fluvial</strong><small>unidades móveis fluviais</small></span>
+        </label>
+        <label class="layer-row">
+          <input id="mcomTerrestreToggle" type="checkbox" checked>
+          <i class="dot cyan"></i>
+          <span><strong>MCom - terrestre</strong><small>unidades móveis terrestres</small></span>
         </label>
         <label class="layer-row">
           <input id="ubsfToggle" type="checkbox" checked>
@@ -102,7 +107,8 @@
     <section class="map-wrap">
       <div id="map"></div>
       <div class="legend">
-        <span><i class="dot blue"></i>MCom</span>
+        <span><i class="dot blue"></i>MCom fluvial</span>
+        <span><i class="dot cyan"></i>MCom terrestre</span>
         <span><i class="dot green"></i>UBSF</span>
         <span><i class="dot orange"></i>Apoio estimado</span>
       </div>
@@ -111,7 +117,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="./data/map-data.js?v=9b5a1f0"></script>
-  <script src="./app.js?v=9b5a1f0"></script>
+  <script src="./data/map-data.js?v=4c8f2a1"></script>
+  <script src="./app.js?v=4c8f2a1"></script>
 </body>
 </html>
