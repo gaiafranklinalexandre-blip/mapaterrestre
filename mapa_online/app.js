@@ -9,10 +9,24 @@
 
   const map = L.map("map", { zoomControl: false }).setView([-9.5, -55], 4);
   L.control.zoom({ position: "topright" }).addTo(map);
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 18,
-    attribution: '&copy; OpenStreetMap contributors',
-  }).addTo(map);
+  const baseLayers = [
+    {
+      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+      options: {
+        subdomains: "abcd",
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      },
+    },
+    {
+      url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      options: {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors',
+      },
+    },
+  ];
+  addBaseLayer(0);
 
   const cluster = L.markerClusterGroup({
     chunkedLoading: true,
@@ -80,6 +94,17 @@
     els.selectedCount.textContent = fmt(visible.length);
     els.resultCount.textContent = fmt(visible.length);
     renderResults(visible);
+  }
+
+  function addBaseLayer(index) {
+    const base = baseLayers[index];
+    const tileLayer = L.tileLayer(base.url, base.options).addTo(map);
+    if (baseLayers[index + 1]) {
+      tileLayer.once("tileerror", () => {
+        map.removeLayer(tileLayer);
+        addBaseLayer(index + 1);
+      });
+    }
   }
 
   function getVisible() {
