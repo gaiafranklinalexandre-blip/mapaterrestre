@@ -66,7 +66,7 @@
 
   els.metricMcomFluvial.textContent = fmt(countMcom("FLUVIAL"));
   els.metricMcomTerrestre.textContent = fmt(countMcom("TERRESTRE"));
-  els.metricUomMcom.textContent = fmt(data.summary.uomMcomMapped || layers.uomMcom.length);
+  els.metricUomMcom.textContent = fmt(data.summary.uomAmazoniaMapped || data.summary.uomMcomMapped || layers.uomMcom.length);
   els.metricEsfr.textContent = fmt(data.summary.esfrMapped || layers.esfr.length);
   els.metricUbsf.textContent = fmt(data.summary.ubsfMapped || layers.ubsf.length);
   els.metricApoio.textContent = fmt(data.summary.apoioEstimated || layers.apoio.length);
@@ -172,7 +172,7 @@
       : item.layer === "ubsf"
         ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Apoios", item.qtdApoio], ["Endereço", [item.logradouro, item.bairro, item.cep].filter(Boolean).join(", ")]]
         : item.layer === "uomMcom"
-          ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Status", item.status], ["Endereço", item.endereco]]
+          ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Status", item.status], ["Fonte", item.fonte || "SCNES"]]
           : item.layer === "esfr"
             ? [["CNES", item.id], ["Tipo", item.type], ["Status", item.status]]
             : [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Tipo", item.type], ["Fibra", item.fibra], ["ERB", item.erb]];
@@ -186,7 +186,7 @@
       : item.layer === "ubsf"
         ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Apoios", item.qtdApoio]]
         : item.layer === "uomMcom"
-          ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Status", item.status], ["Endereço", item.endereco]]
+          ? [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Status", item.status], ["Fonte", item.fonte || "SCNES"]]
           : item.layer === "esfr"
             ? [["CNES", item.id], ["Tipo", item.type], ["Status", item.status]]
             : [["CNES", item.id], ["Município", `${item.municipio}/${item.uf}`], ["Tipo", item.type], ["Fibra", item.fibra || "-"]];
@@ -212,10 +212,10 @@
   function countMcom(kind) { return layers.mcom.filter((item) => normalize(item.type).includes(normalize(kind))).length; }
   function isMcomFluvial(item) { return item.layer === "mcom" && normalize(item.type).includes("fluvial"); }
   function isMcomTerrestre(item) { return item.layer === "mcom" && normalize(item.type).includes("terrestre"); }
-  function badgeText(item) { return item.layer === "apoio" ? "Apoio" : item.layer === "ubsf" ? "UBSF" : item.layer === "uomMcom" ? "UOM MCom" : item.layer === "esfr" ? "eSFR" : isMcomFluvial(item) ? "MCom fluvial" : "MCom terrestre"; }
+  function badgeText(item) { return item.layer === "apoio" ? "Apoio" : item.layer === "ubsf" ? "UBSF" : item.layer === "uomMcom" ? "UOM Amazonia" : item.layer === "esfr" ? "eSFR" : isMcomFluvial(item) ? "MCom fluvial" : "MCom terrestre"; }
   function shortType(item) {
     if (item.layer === "mcom") return isMcomFluvial(item) ? "Fluvial" : "Terrestre";
-    if (item.layer === "uomMcom") return "UOM MCom";
+    if (item.layer === "uomMcom") return "UOM Amazonia";
     if (item.layer === "esfr") return "eSFR";
     if (item.layer === "apoio") return "Apoio estimado";
     return "UBSF";
