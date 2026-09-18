@@ -236,18 +236,36 @@ input, select {
 }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .marker-dot {
+  display: grid;
+  place-items: center;
   width: 15px;
   height: 15px;
   border: 2px solid #fff;
   border-radius: 50%;
   box-shadow: 0 1px 4px rgba(0,0,0,.35);
 }
+.marker-dot svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .marker-mcom-fluvial { background: var(--blue); }
 .marker-mcom-terrestre { background: var(--cyan); }
+.marker-uom-mcom,
+.marker-ubsf,
+.marker-apoio,
+.marker-esfr {
+  width: 26px;
+  height: 26px;
+}
 .marker-uom-mcom { background: var(--red); }
-.marker-esfr { background: var(--teal); width: 10px; height: 10px; opacity: .92; }
+.marker-esfr { background: var(--teal); opacity: .92; }
 .marker-ubsf { background: var(--green); }
-.marker-apoio { background: var(--orange); width: 10px; height: 10px; opacity: .86; }
+.marker-apoio { background: var(--orange); opacity: .92; }
 .leaflet-popup-content h3 { margin: 0 0 6px; font-size: 14px; }
 .leaflet-popup-content dl {
   display: grid;
