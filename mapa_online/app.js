@@ -203,7 +203,7 @@
 
   function iconSymbol(item) {
     const icons = {
-      uomMcom: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h2.1l1.4 7.2a2 2 0 0 0 2 1.6h5.8a2 2 0 0 0 1.9-1.4l1.2-4.4H8.1"/><path d="M5 6H3"/><circle cx="10.5" cy="18.5" r="1.5"/><circle cx="17" cy="18.5" r="1.5"/></svg>',
+      uomMcom: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h10A2.5 2.5 0 0 1 18 8.5V10h1.2a1.8 1.8 0 0 1 1.6 1l.7 1.5c.3.6.5 1.3.5 2V18h-2.5a2.5 2.5 0 0 0-5 0h-5a2.5 2.5 0 0 0-5 0H3V8.5Z"/><path d="M6 9h4v4H6zM12 9h4v4h-4z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
       ubsf: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14h16l-2.1 4.2a3 3 0 0 1-2.7 1.8H8.8a3 3 0 0 1-2.7-1.8L4 14Z"/><path d="M8 14V7l5-2v9"/><path d="M13 7h4l2 7"/><path d="M7 11h12"/></svg>',
       apoio: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5"/><path d="M6.5 10.5V20h11V10.5"/><path d="M10 20v-5h4v5"/></svg>',
       esfr: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>',
